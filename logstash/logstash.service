@@ -1,0 +1,19 @@
+[Unit]
+Description=Logstash service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment HOSTNAME=$(hostname -i)"
+ExecStartPre=/usr/bin/docker pull stakater/logstash-with-consul-template:0.18.0-rc1
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
+                          -p 5044:5044 \
+                          --dns=${HOSTNAME} \
+                          --dns-search=service.consul \
+                          -v /consul-templates/logstash:/templates \
+                          -e SERVICE_NAME=logstash \
+                          stakater/logstash-with-consul-template:0.18.0-rc1"
+ExecStop=/usr/bin/docker stop %n
+RestartSec=10
+Restart=always

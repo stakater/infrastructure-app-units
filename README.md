@@ -1,2 +1,5 @@
-# infrastructure-app-units
-Application Units for infrastructure applications 
+# Application Units for Stakater infrastructure applications
+
+This repo contains different systemd unit files for infrastruction applications.
+
+If any systemd unit has templates in  `<app_name/templates`, place those templates in `/consul-templates/<app-name>/`, before starting the unit 
