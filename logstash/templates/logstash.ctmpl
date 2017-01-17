@@ -1,16 +1,22 @@
 input {
         beats {
-                port => {{key /logstash/beatsPort}}
+            {{$beatsPortKey := "/logstash/beatsPort" }}
+            {{if keyExists $beatsPortKey}}
+                port => {{key $beatsPortKey}}
+            {{end}}
         }
 }
 filter {
+  {{$syslogPatternKey := "/logstash/syslogPattern" }}
+  {{if keyExists $syslogPatternKey}}
   if [type] == "syslog" {
       grok {
-          match => { "message" => "{{key "/logstash/syslogPattern"}}" }
+          match => { "message" => "{{key $syslogPatternKey }}" }
           overwrite => ["message"]
           remove_tag => [ "_grokparsefailure" ]
       }
   }
+  {{end}}
   mutate {
       gsub => [ "app_name", "[-:].*", "" ]
       gsub => [ "message", "\\n", "
@@ -18,32 +24,42 @@ filter {
       lowercase => [ "app_name" ]
   }
   if !("_grokparsefailure" in [tags]) {
-    {{range $index, $app := ls "/logstash"}}
-      if [app_name] == "{{ $app }}"  {
-        {{$multilineKey := printf "/logstash/%s/multilinePattern" $app }}{{$grokKey := printf "/logstash/%s/grokPattern" $app }}
+    {{ scratch.Set "isAppBlockPresent" 0 }}
+    {{range $app, $app_keys := tree "/logstash/apps" | byKey}}
+      {{$isAppBlockPresent := scratch.Get "isAppBlockPresent" }}
+      {{if ne $isAppBlockPresent 0}}else{{end}}
+      if [app_name] == "{{$app}}" {
+        {{$multilineKey := printf "/logstash/apps/%s/multilinePattern" $app }}{{$grokKey := printf "/logstash/apps/%s/grokPattern" $app }}
         {{ if keyExists $multilineKey }}
           multiline {
               pattern => "{{key $multilineKey}}"
               negate => true
               what => "previous"
           }
-       {{ end }}{{ if keyExists $grokKey }}
+        {{ end }}{{ if keyExists $grokKey }}
          grok {
             match => { "message" => "{{key $grokKey }}" }
             overwrite => ["message"]
             remove_tag => [ "_grokparsefailure" ]
           }
-       {{ end }}
+        {{ end }}
       }
-    {{ end }}{{$grokKey := "/logstash/defaultPattern" }}
-    {{ if keyExists $grokKey }}
+      {{ scratch.Set "isAppBlockPresent" 1 }}
+    {{end}}
+    {{$defaultPattern := "/logstash/defaultPattern" }}
+    {{ if keyExists $defaultPattern }}
+    {{$isAppBlockPresent := scratch.Get "isAppBlockPresent" }}
+    {{if ne $isAppBlockPresent 0}}
       else {
+    {{end}}
           grok {
-              match => { "message" => "{{key $grokKey }}" }
+              match => { "message" => "{{key $defaultPattern }}" }
               overwrite => ["message"]
               remove_tag => [ "_grokparsefailure" ]
           }
+    {{if ne $isAppBlockPresent 0}}
       }
+    {{end}}
     {{ end }}
     date {
       timezone => "UTC"
