@@ -1,0 +1,20 @@
+[Unit]
+Description=Cassandra Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment HOSTNAME=$(hostname -i)"
+ExecStartPre=/usr/bin/docker pull cassandra
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
+                          -p 7199:7199 -p 9160:9160 \
+                          --dns=${HOSTNAME} \
+                          --dns-search=service.consul \
+                          -v cassandradata:/var/lib/cassandra \
+                          -e CASSANDRA_START_RPC=true \
+                          -e SERVICE_NAME=cassandra \
+                          cassandra"
+ExecStop=/usr/bin/docker stop %n
+RestartSec=10
+Restart=always

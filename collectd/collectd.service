@@ -1,0 +1,18 @@
+[Unit]
+Description=Collectd service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment HOSTNAME=$(hostname -i)"
+ExecStartPre=/usr/bin/docker pull stakater/collectd-with-consul-template:0.18.0-rc1
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
+                          --dns=${HOSTNAME} \
+                          --dns-search=service.consul \
+                          -v /admiral-config/collectd/consul-templates:/templates \
+                          -e SERVICE_NAME=collectd \
+                          stakater/collectd-with-consul-template:0.18.0-rc1"
+ExecStop=/usr/bin/docker stop %n
+RestartSec=10
+Restart=always

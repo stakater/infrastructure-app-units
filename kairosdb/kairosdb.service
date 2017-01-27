@@ -1,0 +1,22 @@
+[Unit]
+Description=KairosDB service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment HOSTNAME=$(hostname -i)"
+ExecStartPre=/usr/bin/docker pull stakater/kairosdb
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
+                          -p 4242:4242 \
+                          --dns=${HOSTNAME} \
+                          --dns-search=service.consul \
+                          -v /admiral-config/kairosdb/consul-templates:/templates \
+                          -e REPFACTOR=1 \
+                          -e PORT_TELNET=4242 \
+                          -e PORT_HTTP=8080 \
+                          -e SERVICE_NAME=kairosdb \
+                          stakater/kairosdb"
+ExecStop=/usr/bin/docker stop %n
+RestartSec=10
+Restart=always

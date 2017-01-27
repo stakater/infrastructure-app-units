@@ -1,0 +1,18 @@
+[Unit]
+Description=Grafana Service
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment HOSTNAME=$(hostname -i)"
+ExecStartPre=/usr/bin/docker pull stakater/grafana
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
+                          -p 3000:3000 \
+                          --dns=${HOSTNAME} \
+                          --dns-search=service.consul \
+                          -e SERVICE_NAME=grafana \
+                          stakater/grafana"
+ExecStop=/usr/bin/docker stop %n
+RestartSec=10
+Restart=always
