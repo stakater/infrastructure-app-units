@@ -15,5 +15,5 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           -e SERVICE_NAME=logstash \
                           stakater/logstash-with-consul-template:0.18.0-rc1"
 ExecStop=/usr/bin/docker stop %n
-RestartSec=10
+RestartSec=30
 Restart=always
