@@ -11,8 +11,8 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           -p 5601:5601 \
                           --dns=${HOSTNAME} \
                           --dns-search=service.consul \
-                          -e SERVICE_NAME=kibana \
-                          -e SERIVCE_TAGS=infra-app \
+                          --label SERVICE_NAME=kibana \
+                          --label SERIVCE_TAGS=infra-app \
                           -e ELASTICSEARCH_URL=http://elasticsearch-9200:9200 \
                           stakater/kibana:4.5"
 ExecStop=/usr/bin/docker stop %n
