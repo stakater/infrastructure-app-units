@@ -12,8 +12,8 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           --dns=${HOSTNAME} \
                           --dns-search=service.consul \
                           -v /admiral-config/logstash/consul-templates:/templates \
-                          -e SERVICE_NAME=logstash \
-                          -e SERIVCE_TAGS=infra-app \
+                          --label SERVICE_NAME=logstash \
+                          --label SERIVCE_TAGS=infra-app \
                           stakater/logstash-with-consul-template:0.18.0-rc1"
 ExecStop=/usr/bin/docker stop %n
 RestartSec=30
