@@ -4,11 +4,11 @@ After=docker.service
 Requires=docker.service
 
 [Service]
-ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment HOSTNAME=$(hostname -i)"
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment IPV4=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)"
 ExecStartPre=/usr/bin/docker pull stakater/filebeat-with-consul-template
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
-                          --dns=${HOSTNAME} \
+                          --dns=${IPV4} \
                           --dns-search=service.consul \
                           -v /data/logs:/var/log/app \
                           -v /docker-data/filebeat/:/filebeat-data \
