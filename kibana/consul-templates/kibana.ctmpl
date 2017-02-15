@@ -17,7 +17,9 @@ server.basePath: "{{key $basePath }}"
 # The Elasticsearch instance to use for all your queries.
 {{$esURL := "/kibana/elasticsearchURL"}}
 {{ if keyExists $esURL }}
-elasticsearch.url: "{{key $esURL }}"
+elasticsearch.url: '{{key $esURL }}'
+{{else}}
+elasticsearch.url: 'http://elasticsearch:9200'
 {{ end }}
 
 # preserve_elasticsearch_host true will send the hostname specified in `elasticsearch`. If you set it to false,
