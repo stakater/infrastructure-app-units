@@ -5,7 +5,7 @@ Requires=docker.service
 
 [Service]
 ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment HOSTNAME=$(hostname -i)"
-ExecStartPre=/usr/bin/docker pull stakater/kibana:4.5
+ExecStartPre=/usr/bin/docker pull stakater/kibana-with-consul-template:0.18.0-rc1
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           -p 5601:5601 \
@@ -13,8 +13,7 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           --dns-search=service.consul \
                           --label SERVICE_NAME=kibana \
                           --label SERVICE_TAGS=infra-app \
-                          -e ELASTICSEARCH_URL=http://elasticsearch-9200:9200 \
-                          stakater/kibana:4.5"
+                          stakater/kibana-with-consul-template:0.18.0-rc1"
 ExecStop=/usr/bin/docker stop %n
 RestartSec=10
 Restart=always
