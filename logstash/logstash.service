@@ -15,6 +15,7 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           -v /admiral-config/logstash/consul-templates:/templates \
                           --label SERVICE_NAME=logstash \
                           --label SERVICE_TAGS=infra-app \
+                          --memory=2048m \
                           stakater/logstash-with-consul-template:5.2-0.18.0"
 ExecStop=/usr/bin/docker stop %n
 RestartSec=30
