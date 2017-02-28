@@ -13,6 +13,7 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           --dns-search=service.consul \
                           --label SERVICE_NAME=kibana \
                           --label SERVICE_TAGS=infra-app \
+                          --memory=2048m \
                           -v /admiral-config/kibana/consul-templates:/templates \
                           stakater/kibana-with-consul-template:5.2-0.18.0"
 ExecStop=/usr/bin/docker stop %n
