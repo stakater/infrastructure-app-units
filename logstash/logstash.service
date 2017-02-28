@@ -17,6 +17,7 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           --label SERVICE_TAGS=infra-app \
                           --memory=2048m \
                           stakater/logstash-with-consul-template:5.2-0.18.0"
+TimeoutStartSec=360
 ExecStop=/usr/bin/docker stop %n
 RestartSec=30
 Restart=always
