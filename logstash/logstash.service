@@ -1,7 +1,6 @@
 [Unit]
 Description=Logstash service
 Requires=docker.service
-Requires=elasticsearch.service
 After=elasticsearch.service
 
 [Service]
