@@ -9,6 +9,7 @@ ExecStartPre=/usr/bin/docker pull stakater/logstash-with-consul-template:5.2-0.1
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           -p 5044:5044 \
+                          -p 9600:9600 \
                           --dns=${IPV4} \
                           --dns-search=service.consul \
                           -v /admiral-config/logstash/consul-templates:/templates \
