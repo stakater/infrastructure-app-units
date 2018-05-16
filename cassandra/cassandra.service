@@ -1,7 +1,7 @@
 [Unit]
 Description=Cassandra Service
-After=docker.service
-Requires=docker.service
+After=docker.service consul-agent.service
+Requires=docker.service consul-agent.service
 
 [Service]
 ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment HOSTNAME=$(hostname -i)"

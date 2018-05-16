@@ -1,7 +1,7 @@
 [Unit]
 Description=Filebeat service, for beating logs and sending them to Logstash
-After=docker.service
-Requires=docker.service
+After=docker.service consul-agent.service
+Requires=docker.service consul-agent.service
 
 [Service]
 ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment IPV4=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)"
