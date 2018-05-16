@@ -1,0 +1,24 @@
+[Unit]
+Description=Curator service, for deleting indices of elastic search older than 6 months
+After=docker.service consul-agent.service
+Requires=docker.service consul-agent.service
+
+[Service]
+ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment IPV4=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)"
+ExecStartPre=/usr/bin/docker pull stakater/filebeat-with-consul-template:5.2-0.18.0
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
+                          --dns=${IPV4} \
+                          --dns-search=service.consul \
+                          -e ELASTICSEARCH_HOST=elasticsearch \
+                          -e ELASTICSEARCH_PORT=9200 \
+                          -e OLDER_THAN=6 \
+                          -e TIME_UNIT=months \
+                          -e DO_SNAPSHOT='' \
+                          stakater/elasticsearch-curator:3.5.1"
+ExecStop=/usr/bin/docker stop %n
+RestartSec=10
+Restart=always
+
+[X-Fleet]
+Global=true
