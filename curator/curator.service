@@ -5,7 +5,7 @@ Requires=docker.service consul-agent.service
 
 [Service]
 ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment IPV4=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)"
-ExecStartPre=/usr/bin/docker pull stakater/filebeat-with-consul-template:5.2-0.18.0
+ExecStartPre=/usr/bin/docker pull stakater/elasticsearch-curator:3.5.1
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           --dns=${IPV4} \
