@@ -12,7 +12,7 @@ ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           -p 9200:9200 -p 9300:9300 \
                           --dns=${IPV4} \
                           --dns-search=service.consul \
-                          -v /docker-data/esdata:/usr/share/elasticsearch/data \
+                          -v /data/docker/elasticsearch:/usr/share/elasticsearch/data \
                           --label SERVICE_NAME=elasticsearch \
                           --label SERVICE_TAGS=infra-app \
                           stakater/elasticsearch:5.2"
