@@ -281,7 +281,7 @@ output:
   ### Logstash as output
   logstash:
     # The Logstash hosts
-    hosts: [{{range $index, $service := service "logstash"}}{{if ne $index 0}},{{end}}"{{.Address}}:{{.Port}}"{{end}}]
+    hosts: [{{range $index, $service := service "logstash-5044"}}{{if ne $index 0}},{{end}}"{{.Address}}:{{.Port}}"{{end}}]
 
     # Number of workers per Logstash host.
     #worker: 1
