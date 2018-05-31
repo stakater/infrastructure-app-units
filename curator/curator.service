@@ -5,17 +5,17 @@ Requires=docker.service consul-agent.service elasticsearch.service
 
 [Service]
 ExecStartPre=/usr/bin/bash -c "/usr/bin/systemctl set-environment IPV4=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)"
-ExecStartPre=/usr/bin/docker pull stakater/elasticsearch-curator:3.5.1
+ExecStartPre=/usr/bin/docker pull stakater/elasticsearch-curator:5.5.4
 ExecStartPre=-/usr/bin/docker rm %n
 ExecStart=/usr/bin/sh -c "/usr/bin/docker run --rm --name %n \
                           --dns=${IPV4} \
                           --dns-search=service.consul \
-                          -e ELASTICSEARCH_HOST=elasticsearch \
+                          -e ELASTICSEARCH_HOST=elasticsearch-9200 \
                           -e ELASTICSEARCH_PORT=9200 \
                           -e OLDER_THAN=6 \
                           -e TIME_UNIT=months \
                           -e DO_SNAPSHOT='' \
-                          stakater/elasticsearch-curator:3.5.1"
+                          stakater/elasticsearch-curator:5.5.4"
 ExecStop=/usr/bin/docker stop %n
 RestartSec=10
 Restart=always
